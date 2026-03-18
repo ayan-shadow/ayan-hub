@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayan Mega Hub | Professional</title>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <style>
+        :root { --neon: #00ffcc; --admin: #ff0055; --bg: #050505; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; text-align: center; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #111; border-bottom: 2px solid var(--neon); box-shadow: 0 0 15px var(--neon); }
+        .logo { font-weight: bold; color: var(--neon); font-size: 22px; letter-spacing: 2px; }
+        .hero { padding: 40px 20px; }
+        .card { background: #111; border: 1px solid #333; border-radius: 15px; padding: 25px; margin: 10px auto; max-width: 400px; transition: 0.3s; }
+        .card:hover { border-color: var(--neon); transform: translateY(-5px); }
+        .coins { font-size: 45px; color: gold; text-shadow: 0 0 20px rgba(255,215,0,0.5); font-weight: bold; margin: 10px 0; }
+        .btn-google { background: white; color: black; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 10px; margin: 0 auto; }
+        .btn-tool { width: 90%; padding: 15px; margin: 10px 0; background: var(--neon); border: none; border-radius: 10px; font-weight: bold; color: black; cursor: pointer; font-size: 16px; }
+        #admin-tag { color: var(--admin); font-weight: bold; display: none; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <div class="logo">AYAN MEGA HUB</div>
+        <div id="auth-section">
+            <button class="btn-google" id="login-btn" onclick="login()">
+                <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" width="20"> Login
+            </button>
+        </div>
+    </div>
+
+    <div class="hero">
+        <div class="card">
+            <h3 id="user-welcome">Welcome, Guest</h3>
+            <div id="admin-tag">SUPER ADMIN ACCESS</div>
+            <div class="coins" id="coin-balance">0</div>
+            <p style="color: #888;">Available Credits</p>
+        </div>
+
+        <div style="margin-top: 30px;">
+            <button class="btn-tool" onclick="checkAccess('Video Downloader Active')">Video Downloader (YT/Insta)</button>
+            <button class="btn-tool" style="background:#222; color:var(--neon); border:1px solid var(--neon);" onclick="checkAccess('Scripts Loaded')">Game Logic & Scripts</button>
+            <button class="btn-tool" style="background:var(--admin); color:white;" onclick="location.href='https://t.me/ayanmods'">Contact Ayan (Telegram)</button>
+        </div>
+    </div>
+
+    <script>
+        // FIREBASE CONFIG FROM SCREENSHOT
+        const firebaseConfig = {
+            apiKey: "AIzaSyDE_G-I0Xp3_Z9xGfL8y4N6m8R5wK2vJ4U", 
+            authDomain: "ayanmegaweb.firebaseapp.com",
+            projectId: "ayanmegaweb",
+            storageBucket: "ayanmegaweb.firebasestorage.app",
+            messagingSenderId: "801336838090",
+            appId: "1:801336838090:web:d708f516a8c2f1f0088981"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        function login() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider).then((result) => {
+                const user = result.user;
+                updateUI(user);
+            }).catch((error) => {
+                alert("Login Failed: " + error.message);
+            });
+        }
+
+        function updateUI(user) {
+            document.getElementById('user-welcome').innerText = "Welcome, " + user.displayName;
+            document.getElementById('login-btn').style.display = 'none';
+
+            // SPECIAL ADMIN ACCESS FOR AYAN
+            if(user.email === "arkadiphaldar91@gmail.com") {
+                document.getElementById('coin-balance').innerText = "∞";
+                document.getElementById('admin-tag').style.display = 'block';
+                document.getElementById('admin-tag').innerText = "BOSS AYAN: UNLIMITED ACCESS";
+            } else {
+                document.getElementById('coin-balance').innerText = "50";
+                document.getElementById('admin-tag').style.display = 'none';
+            }
+        }
+
+        function checkAccess(msg) {
+            if(!auth.currentUser) {
+                alert("Pehle Login karo Ayan bhai!");
+            } else {
+                alert(msg);
+            }
+        }
+
+        // Check if user is already logged in
+        auth.onAuthStateChanged((user) => {
+            if (user) updateUI(user);
+        });
+    </script>
+</body>
+</html>
