@@ -3,58 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ayan Mega Hub</title>
+    <title>Ayan Mega Hub | Official</title>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <style>
-        /* Modern Neon Design */
-        body { background-color: #000; color: #fff; font-family: 'Segoe UI', Arial, sans-serif; text-align: center; margin: 0; padding: 20px; }
-        .header { color: #00ffcc; font-size: 28px; font-weight: bold; margin-bottom: 20px; text-transform: uppercase; border-bottom: 2px solid #00ffcc; padding-bottom: 10px; text-shadow: 0 0 10px #00ffcc; }
-        .card { background: #111; border: 1px solid #333; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        .user-info { font-size: 18px; margin-bottom: 10px; color: #eee; }
-        .credits { font-size: 48px; color: #ffcc00; font-weight: bold; text-shadow: 0 0 15px #ffcc00; }
-        .btn { display: block; width: 100%; padding: 15px; margin: 12px 0; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; text-decoration: none; transition: 0.3s; }
-        .btn-green { background-color: #00ffcc; color: #000; box-shadow: 0 0 10px #00ffcc; }
-        .btn-green:hover { transform: scale(1.02); }
-        .btn-dark { background-color: #222; color: #00ffcc; border: 1px solid #00ffcc; }
-        .btn-red { background-color: #ff0055; color: #fff; box-shadow: 0 0 10px #ff0055; }
-        #login-section { position: absolute; top: 15px; right: 15px; }
-        #login-btn { background: white; color: black; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 8px; font-size: 14px; }
-        input { width: 85%; padding: 12px; border-radius: 8px; border: 1px solid #00ffcc; background: #000; color: #fff; margin-bottom: 15px; outline: none; }
-        h3 { margin-top: 0; color: #00ffcc; }
+        :root { --neon: #00ffcc; --bg: #000b1a; --card: #011d4e; }
+        body { background-color: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; text-align: center; margin: 0; padding: 20px; }
+        .header { color: var(--neon); font-size: 26px; font-weight: bold; text-transform: uppercase; margin-bottom: 20px; text-shadow: 0 0 10px var(--neon); }
+        
+        /* Profile Card */
+        .wallet-card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 20px; text-align: left; border: 1px solid #1a237e; }
+        .wallet-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .balance-label { color: #aaa; font-size: 14px; }
+        .balance-value { font-size: 32px; font-weight: bold; color: #fff; }
+        
+        /* Buttons */
+        .btn { display: block; width: 100%; padding: 15px; margin: 10px 0; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; text-decoration: none; transition: 0.3s; }
+        .btn-neon { background: var(--neon); color: #000; box-shadow: 0 0 10px var(--neon); }
+        .btn-outline { background: transparent; border: 1px solid var(--neon); color: var(--neon); }
+        .btn-red { background: #ff0055; color: #fff; }
+
+        /* Shop Grid */
+        .shop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .item-card { background: #01112b; border: 1px solid #1a237e; border-radius: 15px; padding: 15px; transition: 0.3s; }
+        .item-card:hover { border-color: var(--neon); }
+
+        /* Payment Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: #fff; color: #000; padding: 25px; border-radius: 25px; width: 85%; max-width: 350px; }
+        .qr-frame { border: 1px solid #ddd; padding: 10px; border-radius: 15px; margin: 15px 0; display: inline-block; }
+        .qr-img { width: 180px; height: 180px; }
+        #timer { color: #ff0055; font-weight: bold; margin-bottom: 10px; }
+
+        #login-btn { background: #fff; color: #000; padding: 10px 20px; border-radius: 8px; cursor: pointer; display: inline-block; margin-bottom: 20px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div id="login-section">
-        <div id="login-btn" onclick="googleLogin()">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"> Google Login
+    <div class="header">Ayan Mega Hub</div>
+
+    <div id="auth-section">
+        <div id="login-btn" onclick="googleLogin()">Login with Google</div>
+    </div>
+
+    <div id="main-ui" style="display:none;">
+        <div class="wallet-card">
+            <div class="wallet-row">
+                <div>
+                    <div class="balance-label">Total Credits</div>
+                    <div class="balance-value" id="userCredits">0</div>
+                </div>
+                <div id="userName" style="font-size: 14px; color: var(--neon);">Ayan Boss</div>
+            </div>
+        </div>
+
+        <button class="btn btn-neon" onclick="toggleDownloader()">Video Downloader (YT/Insta)</button>
+        
+        <div id="downloader-box" style="display:none;" class="wallet-card">
+            <input type="text" id="videoUrl" placeholder="Paste Link Here..." style="width:90%; padding:10px; border-radius:8px; border:none; margin-bottom:10px;">
+            <button class="btn btn-neon" onclick="startDownload()" style="padding:10px;">Download (5 Coins)</button>
+        </div>
+
+        <a href="https://t.me/+L8lysSPRWHo0YjI9" class="btn btn-outline">Game Logic & Scripts</a>
+        <a href="https://t.me/+L8lysSPRWHo0YjI9" class="btn btn-red">Contact Ayan (Telegram)</a>
+
+        <h3 style="text-align:left; margin-left:10px; color:var(--neon);">💰 Recharge Credits</h3>
+        <div class="shop-grid">
+            <div class="item-card" onclick="openPayment(10, '100 Credits')">
+                <p>100 Credits</p>
+                <p style="color:var(--neon); font-weight:bold;">₹10</p>
+                <button style="width:100%; border-radius:5px; border:none; background:var(--neon);">ADD</button>
+            </div>
+            <div class="item-card" onclick="openPayment(50, 'Premium Member')">
+                <p>👑 Premium</p>
+                <p style="color:var(--neon); font-weight:bold;">₹50</p>
+                <button style="width:100%; border-radius:5px; border:none; background:var(--neon);">ADD</button>
+            </div>
         </div>
     </div>
 
-    <div class="header">Ayan Mega Hub</div>
-
-    <div class="card">
-        <div class="user-info" id="userName">Welcome, Guest</div>
-        <div class="credits" id="userCredits">0</div>
-        <div style="color: #888; font-size: 14px;">Available Credits</div>
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-top:0;">Secure Payment</h3>
+            <div id="timer">Expires in 10:00</div>
+            <div id="payAmount" style="font-size:24px; font-weight:bold;">₹10.00</div>
+            <div class="qr-frame">
+                <img id="qrCode" src="" alt="QR" class="qr-img">
+            </div>
+            <p style="font-size:12px; color:#666;">Scan QR using any UPI App</p>
+            <p style="font-size:11px; background:#f0f0f0; padding:5px; border-radius:5px;">ID: 9733******@ibl</p>
+            <button onclick="closePayment()" style="margin-top:15px; border:none; background:#eee; padding:10px 20px; border-radius:8px; cursor:pointer;">Close</button>
+        </div>
     </div>
-
-    <div class="card" id="downloader-box" style="display:none;">
-        <h3>Video Downloader</h3>
-        <input type="text" id="videoUrl" placeholder="Paste Insta/YT/FB Link here...">
-        <button class="btn btn-green" onclick="startDownload()">Download (Cost: 5 Coins)</button>
-        <div id="statusMsg" style="margin-top:10px; font-size:14px; color: #00ffcc;"></div>
-    </div>
-
-    <button class="btn btn-green" onclick="alert('Downloader box upar open ho gaya hai!')">Video Downloader Pro</button>
-    <a href="https://t.me/+L8lysSPRWHo0YjI9" class="btn btn-dark">Game Logic & Scripts</a>
-    <a href="https://t.me/+L8lysSPRWHo0YjI9" class="btn btn-red">Contact Ayan (Telegram)</a>
-
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
     <script>
-        // Firebase Config
+        // --- CONFIGURATION ---
         const firebaseConfig = {
             apiKey: "AIzaSyDtNMBDNRVkfNBuJRJeNJIXc_5mS9oK9zk",
             authDomain: "ayanmegaweb.firebaseapp.com",
@@ -64,102 +108,78 @@
             appId: "1:801336838090:web:fadc71f3106b072e4c3133",
             databaseURL: "https://ayanmegaweb-default-rtdb.firebaseio.com/" 
         };
+        const myUpiId = "9733020547@ibl"; // Tumhara ID
+        const myName = "Ayan Mega Hub";
 
+        // --- INITIALIZE ---
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.database();
+        let countdown;
 
+        // --- AUTH LOGIC ---
         function googleLogin() {
             const provider = new firebase.auth.GoogleAuthProvider();
-            auth.signInWithPopup(provider).catch(e => alert("Login Failed: " + e.message));
+            auth.signInWithPopup(provider).catch(e => alert("Error: " + e.message));
         }
 
         auth.onAuthStateChanged((user) => {
             if (user) {
-                document.getElementById('login-section').style.display = "none";
-                document.getElementById('downloader-box').style.display = "block";
-                document.getElementById('userName').innerText = "Welcome, " + user.displayName;
+                document.getElementById('auth-section').style.display = "none";
+                document.getElementById('main-ui').style.display = "block";
+                document.getElementById('userName').innerText = "Boss: " + user.displayName;
 
                 const userRef = db.ref('users/' + user.uid);
-                userRef.on('value', (snapshot) => {
-                    const data = snapshot.val();
-                    if (data) {
-                        document.getElementById('userCredits').innerText = data.coins;
+                userRef.on('value', (snap) => {
+                    if (snap.exists()) {
+                        document.getElementById('userCredits').innerText = snap.val().coins;
                     } else {
-                        userRef.set({ name: user.displayName, coins: 50, email: user.email });
+                        userRef.set({ name: user.displayName, coins: 50 });
                     }
                 });
             }
         });
 
+        // --- PAYMENT LOGIC ---
+        function openPayment(amount, item) {
+            document.getElementById('paymentModal').style.display = "flex";
+            document.getElementById('payAmount').innerText = "₹" + amount;
+            
+            const upiUrl = `upi://pay?pa=${myUpiId}&pn=${encodeURIComponent(myName)}&am=${amount}&cu=INR`;
+            const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiUrl)}`;
+            document.getElementById('qrCode').src = qrApi;
+            
+            startTimer(10);
+        }
+
+        function startTimer(min) {
+            clearInterval(countdown);
+            let time = min * 60;
+            countdown = setInterval(() => {
+                let m = Math.floor(time / 60);
+                let s = time % 60;
+                document.getElementById('timer').innerText = `Expires in ${m}:${s < 10 ? '0'+s : s}`;
+                if (--time < 0) { clearInterval(countdown); closePayment(); }
+            }, 1000);
+        }
+
+        function closePayment() { document.getElementById('paymentModal').style.display = "none"; }
+
+        // --- TOOLS ---
+        function toggleDownloader() {
+            const box = document.getElementById('downloader-box');
+            box.style.display = box.style.display === "none" ? "block" : "none";
+        }
+
         function startDownload() {
             const url = document.getElementById('videoUrl').value;
-            let coins = parseInt(document.getElementById('userCredits').innerText);
-
-            if (!url) { alert("Please paste a link first!"); return; }
-            if (coins < 5) { alert("Not enough coins! Contact Boss Ayan."); return; }
-
-            db.ref('users/' + auth.currentUser.uid).update({ coins: coins - 5 });
-            document.getElementById('statusMsg').innerText = "Connecting to Ayan Servers...";
+            let currentCoins = parseInt(document.getElementById('userCredits').innerText);
+            if (!url) return alert("Link dalo bhai!");
+            if (currentCoins < 5) return alert("Coins kam hain!");
             
-            setTimeout(() => {
-                document.getElementById('statusMsg').innerText = "Processing complete! Downloading starting...";
-            }, 3000);
+            db.ref('users/' + auth.currentUser.uid).update({ coins: currentCoins - 5 });
+            alert("Processing... Payment Successful!");
         }
-    </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ayan Mega Hub - Shop</title>
-    <style>
-        body { background-color: #000; color: #fff; font-family: Arial, sans-serif; text-align: center; padding: 20px; }
-        .header { color: #00ffcc; font-size: 24px; font-weight: bold; border-bottom: 2px solid #00ffcc; padding-bottom: 10px; }
-        .card { background: #111; border: 1px solid #333; border-radius: 15px; padding: 20px; margin-bottom: 20px; }
-        .credits { font-size: 40px; color: #ffcc00; font-weight: bold; }
-        .shop-box { display: flex; justify-content: space-around; gap: 10px; margin-top: 20px; }
-        .item-card { background: #222; border: 1px solid #00ffcc; border-radius: 10px; padding: 15px; width: 45%; }
-        .btn-buy { background: #00ffcc; color: #000; border: none; padding: 10px; border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
-    </style>
-</head>
-<body>
-
-    <div class="header">AYAN MEGA HUB</div>
-
-    <div class="card">
-        <div id="userName">Welcome, Boss</div>
-        <div class="credits" id="userCredits">Checking...</div>
-    </div>
-
-    <div class="card">
-        <h3 style="color:#00ffcc;">💰 SHOP & MEMBERSHIP</h3>
-        <div class="shop-box">
-            <div class="item-card">
-                <p>100 Credits</p>
-                <p style="color:#ffcc00;">₹10</p>
-                <button class="btn-buy" onclick="payNow(10)">BUY NOW</button>
-            </div>
-            <div class="item-card">
-                <p>👑 Premium</p>
-                <p style="color:#ffcc00;">₹50</p>
-                <button class="btn-buy" onclick="payNow(50)">BUY NOW</button>
-            </div>
-        </div>
-        <p style="font-size: 12px; color: #888; margin-top: 15px;">Payment ke baad screenshot Telegram par bhejein.</p>
-    </div>
-
-    <script>
-        function payNow(amount) {
-            // Apna UPI ID yahan dalo
-            const upiID = "ayan@upi"; 
-            const upiUrl = `upi://pay?pa=${upiID}&pn=AyanMegaHub&am=${amount}&cu=INR`;
-            window.location.href = upiUrl;
-        }
-
-        // Firebase logic (Pichle code wala hi same rahega)
     </script>
 </body>
 </html>
