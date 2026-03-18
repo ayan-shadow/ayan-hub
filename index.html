@@ -109,3 +109,57 @@
     </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayan Mega Hub - Shop</title>
+    <style>
+        body { background-color: #000; color: #fff; font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        .header { color: #00ffcc; font-size: 24px; font-weight: bold; border-bottom: 2px solid #00ffcc; padding-bottom: 10px; }
+        .card { background: #111; border: 1px solid #333; border-radius: 15px; padding: 20px; margin-bottom: 20px; }
+        .credits { font-size: 40px; color: #ffcc00; font-weight: bold; }
+        .shop-box { display: flex; justify-content: space-around; gap: 10px; margin-top: 20px; }
+        .item-card { background: #222; border: 1px solid #00ffcc; border-radius: 10px; padding: 15px; width: 45%; }
+        .btn-buy { background: #00ffcc; color: #000; border: none; padding: 10px; border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">AYAN MEGA HUB</div>
+
+    <div class="card">
+        <div id="userName">Welcome, Boss</div>
+        <div class="credits" id="userCredits">Checking...</div>
+    </div>
+
+    <div class="card">
+        <h3 style="color:#00ffcc;">💰 SHOP & MEMBERSHIP</h3>
+        <div class="shop-box">
+            <div class="item-card">
+                <p>100 Credits</p>
+                <p style="color:#ffcc00;">₹10</p>
+                <button class="btn-buy" onclick="payNow(10)">BUY NOW</button>
+            </div>
+            <div class="item-card">
+                <p>👑 Premium</p>
+                <p style="color:#ffcc00;">₹50</p>
+                <button class="btn-buy" onclick="payNow(50)">BUY NOW</button>
+            </div>
+        </div>
+        <p style="font-size: 12px; color: #888; margin-top: 15px;">Payment ke baad screenshot Telegram par bhejein.</p>
+    </div>
+
+    <script>
+        function payNow(amount) {
+            // Apna UPI ID yahan dalo
+            const upiID = "ayan@upi"; 
+            const upiUrl = `upi://pay?pa=${upiID}&pn=AyanMegaHub&am=${amount}&cu=INR`;
+            window.location.href = upiUrl;
+        }
+
+        // Firebase logic (Pichle code wala hi same rahega)
+    </script>
+</body>
+</html>
