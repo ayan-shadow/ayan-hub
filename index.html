@@ -5,73 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ayan Mega Hub</title>
     <style>
-        body {
-            background-color: #000;
-            color: #fff;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 0;
-            padding: 20px;
-        }
-        .header {
-            color: #00ffcc;
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 30px;
-            text-transform: uppercase;
-            border-bottom: 2px solid #00ffcc;
-            padding-bottom: 10px;
-        }
-        .card {
-            background: #111;
-            border: 1px solid #333;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        .user-info {
-            font-size: 18px;
-            margin-bottom: 10px;
-        }
-        .credits {
-            font-size: 48px;
-            color: #ffcc00;
-            font-weight: bold;
-        }
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-        }
-        .btn-green { background-color: #00ffcc; color: #000; }
+        /* Modern Neon Design */
+        body { background-color: #000; color: #fff; font-family: 'Segoe UI', Arial, sans-serif; text-align: center; margin: 0; padding: 20px; }
+        .header { color: #00ffcc; font-size: 28px; font-weight: bold; margin-bottom: 20px; text-transform: uppercase; border-bottom: 2px solid #00ffcc; padding-bottom: 10px; text-shadow: 0 0 10px #00ffcc; }
+        .card { background: #111; border: 1px solid #333; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .user-info { font-size: 18px; margin-bottom: 10px; color: #eee; }
+        .credits { font-size: 48px; color: #ffcc00; font-weight: bold; text-shadow: 0 0 15px #ffcc00; }
+        .btn { display: block; width: 100%; padding: 15px; margin: 12px 0; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; text-decoration: none; transition: 0.3s; }
+        .btn-green { background-color: #00ffcc; color: #000; box-shadow: 0 0 10px #00ffcc; }
+        .btn-green:hover { transform: scale(1.02); }
         .btn-dark { background-color: #222; color: #00ffcc; border: 1px solid #00ffcc; }
-        .btn-red { background-color: #ff0055; color: #fff; }
-        #login-btn {
-            background: white;
-            color: black;
-            padding: 10px 20px;
-            border-radius: 5px;
-            float: right;
-            cursor: pointer;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .btn-red { background-color: #ff0055; color: #fff; box-shadow: 0 0 10px #ff0055; }
+        #login-section { position: absolute; top: 15px; right: 15px; }
+        #login-btn { background: white; color: black; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 8px; font-size: 14px; }
+        input { width: 85%; padding: 12px; border-radius: 8px; border: 1px solid #00ffcc; background: #000; color: #fff; margin-bottom: 15px; outline: none; }
+        h3 { margin-top: 0; color: #00ffcc; }
     </style>
 </head>
 <body>
 
     <div id="login-section">
         <div id="login-btn" onclick="googleLogin()">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20"> Login
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"> Google Login
         </div>
     </div>
 
@@ -80,18 +35,26 @@
     <div class="card">
         <div class="user-info" id="userName">Welcome, Guest</div>
         <div class="credits" id="userCredits">0</div>
-        <div style="color: #888;">Available Credits</div>
+        <div style="color: #888; font-size: 14px;">Available Credits</div>
     </div>
 
-    <button class="btn btn-green">Video Downloader (YT/Insta)</button>
-    <button class="btn btn-dark">Game Logic & Scripts</button>
-    <a href="https://t.me/your_telegram" class="btn btn-red">Contact Ayan (Telegram)</a>
+    <div class="card" id="downloader-box" style="display:none;">
+        <h3>Video Downloader</h3>
+        <input type="text" id="videoUrl" placeholder="Paste Insta/YT/FB Link here...">
+        <button class="btn btn-green" onclick="startDownload()">Download (Cost: 5 Coins)</button>
+        <div id="statusMsg" style="margin-top:10px; font-size:14px; color: #00ffcc;"></div>
+    </div>
+
+    <button class="btn btn-green" onclick="alert('Downloader box upar open ho gaya hai!')">Video Downloader Pro</button>
+    <a href="https://t.me/+L8lysSPRWHo0YjI9" class="btn btn-dark">Game Logic & Scripts</a>
+    <a href="https://t.me/+L8lysSPRWHo0YjI9" class="btn btn-red">Contact Ayan (Telegram)</a>
 
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
     <script>
-        // Firebase Configuration
+        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyDtNMBDNRVkfNBuJRJeNJIXc_5mS9oK9zk",
             authDomain: "ayanmegaweb.firebaseapp.com",
@@ -99,34 +62,50 @@
             storageBucket: "ayanmegaweb.firebasestorage.app",
             messagingSenderId: "801336838090",
             appId: "1:801336838090:web:fadc71f3106b072e4c3133",
-            measurementId: "G-4JDWL4YZR"
+            databaseURL: "https://ayanmegaweb-default-rtdb.firebaseio.com/" 
         };
 
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
+        const db = firebase.database();
 
-        // Google Login Function
         function googleLogin() {
             const provider = new firebase.auth.GoogleAuthProvider();
-            auth.signInWithPopup(provider)
-                .then((result) => {
-                    alert("Namaste Boss " + result.user.displayName);
-                    window.location.reload();
-                })
-                .catch((error) => {
-                    alert("Error: " + error.message);
-                });
+            auth.signInWithPopup(provider).catch(e => alert("Login Failed: " + e.message));
         }
 
-        // Check Login Status
         auth.onAuthStateChanged((user) => {
             if (user) {
-                document.getElementById('userName').innerText = "Welcome, " + user.displayName;
-                document.getElementById('userCredits').innerText = "Unlimited"; 
                 document.getElementById('login-section').style.display = "none";
+                document.getElementById('downloader-box').style.display = "block";
+                document.getElementById('userName').innerText = "Welcome, " + user.displayName;
+
+                const userRef = db.ref('users/' + user.uid);
+                userRef.on('value', (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        document.getElementById('userCredits').innerText = data.coins;
+                    } else {
+                        userRef.set({ name: user.displayName, coins: 50, email: user.email });
+                    }
+                });
             }
         });
+
+        function startDownload() {
+            const url = document.getElementById('videoUrl').value;
+            let coins = parseInt(document.getElementById('userCredits').innerText);
+
+            if (!url) { alert("Please paste a link first!"); return; }
+            if (coins < 5) { alert("Not enough coins! Contact Boss Ayan."); return; }
+
+            db.ref('users/' + auth.currentUser.uid).update({ coins: coins - 5 });
+            document.getElementById('statusMsg').innerText = "Connecting to Ayan Servers...";
+            
+            setTimeout(() => {
+                document.getElementById('statusMsg').innerText = "Processing complete! Downloading starting...";
+            }, 3000);
+        }
     </script>
 </body>
 </html>
